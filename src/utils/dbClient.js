@@ -3,7 +3,7 @@ const { DEFAULT_ERR_MSG } = require('./constants');
 const { AppError } = require('./errorHandler');
 const { logger } = require('./logger');
 
-module.exports.client = async (query, params) => {
+module.exports.runQuery = async (query, params) => {
     const client = await pool.connect();
     try {
         const result = await client.query(query, params);
