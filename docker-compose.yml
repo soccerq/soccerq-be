@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+    soccerq-db:
+        image: postgres:14.1-alpine
+        ports:
+            - 5678:5432
+        expose:
+            - 5678
+        environment:
+            POSTGRES_USER: ${USER}
+            POSTGRES_PASSWORD: ${DB_PASS}
+            POSTGRES_DB: ${DB_NAME}
+        volumes:
+            - ./apps/db/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+            - ./postgres-data:/var/lib/postgresql/data
+        networks:
+            - soccerq
+    web:
+        build: .
+        image: soccerq:latest
+        ports:
+            - '5500:3000'
+        networks:
+            - soccerq
+        environment:
+            - DB_HOST=${DB_HOST}
+            - DB_PORT=${DB_PORT}
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASS}
+            - DB_NAME=${DB_NAME}
+        expose:
+            - 3000
+        links:
+            - soccerq-db
+        command: |
+            npm run start
+
+networks:
+    soccerq:
